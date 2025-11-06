@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warehouse Navigation Map</title>
+    <style>
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            grid-gap: 20px;
+            padding: 20px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(19, 30px);
+            grid-gap: 2px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .grid-item {
+            width: 30px;
+            height: 30px;
+            background-color: white;
+            border: 1px solid black;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .goal1 {
+            background-color: green;
+        }
+
+        .goal2 {
+            background-color: red;
+        }
+
+        .start {
+            background-color: blue;
+        }
+
+        .obstacle {
+            background-color: black;
+        }
+
+        .highway {
+            background-color: lightgray;
+        }
+
+        .intersection {
+            background-color: darkgray;
+        }
+
+        .goal-display {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .send-button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .task-list {
+            margin-top: 20px;
+            font-size: 1.1em;
+            padding: 10px;
+            border: 1px solid black;
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .log-section {
+            margin-top: 20px;
+            font-size: 1.1em;
+            padding: 10px;
+            border: 1px solid black;
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .log-section ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div>
+        <h2 style="text-align:center">Select Goal 1 and Goal 2</h2>
+
+        <div id="selected-goals" class="goal-display">
+            <p>Goal 1: None</p>
+            <p>Goal 2: None</p>
+        </div>
+
+        <div class="grid-container" id="grid-container">
+            <!-- Grid will be generated here -->
+        </div>
+
+        <div class="button-container">
+            <button class="send-button" onclick="sendSelection()">Send List</button>
+        </div>
+    </div>
+
+    <div>
+        <!-- Task list will show here -->
+        <div class="task-list" id="task-list">
+            <h4>Task List</h4>
+            <ul id="task-list-content">
+                <!-- Tasks will be dynamically inserted here -->
+            </ul>
+        </div>
+
+        <!-- Log section for updates -->
+        <div class="log-section" id="log-section">
+            <h4>Live Updates</h4>
+            <ul id="log-list">
+                <!-- Logs will be dynamically inserted here -->
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    const gridData = [
+        [4, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 4],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        [4, 1, 2, 0, 2, 1, 4, 1, 2, 0, 2, 1, 4, 1, 2, 0, 2, 1, 4],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        [4, 1, 2, 0, 2, 1, 4, 1, 2, 0, 2, 1, 4, 1, 2, 0, 2, 1, 4],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        [4, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 4],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        [4, 1, 2, 0, 2, 1, 4, 1, 2, 0, 2, 1, 4, 1, 2, 0, 2, 1, 4],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        [4, 1, 2, 0, 2, 1, 4, 1, 2, 0, 2, 1, 4, 1, 2, 0, 2, 1, 4],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        [4, 1, 1, 1, 1, 1, 4, 1, 1, 4, 1, 1, 4, 1, 1, 1, 1, 1, 4],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ];
+
+    const gridContainer = document.getElementById("grid-container");
+    const selectedGoals = [];
+
+    function renderGrid() {
+        gridContainer.innerHTML = '';  // Clear grid
+
+        for (let i = 0; i < gridData.length; i++) {
+            for (let j = 0; j < gridData[i].length; j++) {
+                const gridItem = document.createElement("div");
+                gridItem.classList.add("grid-item");
+
+                if (gridData[i][j] === 0) {
+                    gridItem.classList.add("obstacle");
+                } else if (gridData[i][j] === 4) {
+                    gridItem.classList.add("intersection");
+                } else if (gridData[i][j] === 3) {
+                    gridItem.classList.add("start");
+                } else {
+                    gridItem.classList.add("highway");
+                }
+
+                // Add click event to mark goals
+                gridItem.addEventListener("click", function () {
+                    handleGoalSelection(i, j);
+                });
+
+                gridContainer.appendChild(gridItem);
+            }
+        }
+    }
+
+    function handleGoalSelection(i, j) {
+        if (selectedGoals.length < 2) {
+            selectedGoals.push([i, j]);
+        } else {
+            selectedGoals.shift();  // Replace the oldest goal
+            selectedGoals.push([i, j]);
+        }
+        updateGoalDisplay();
+        renderGrid();
+        markGoals();
+    }
+
+    function updateGoalDisplay() {
+        const goalDisplay = document.getElementById("selected-goals");
+        goalDisplay.innerHTML = `
+            <p>Goal 1: ${selectedGoals[0] ? `[${selectedGoals[0]}]` : 'None'}</p>
+            <p>Goal 2: ${selectedGoals[1] ? `[${selectedGoals[1]}]` : 'None'}</p>
+        `;
+    }
+
+    function markGoals() {
+        const goal1 = selectedGoals[0];
+        const goal2 = selectedGoals[1];
+
+        if (goal1) {
+            const goal1Element = gridContainer.children[goal1[0] * 19 + goal1[1]];
+            goal1Element.classList.remove("highway", "obstacle");
+            goal1Element.classList.add("goal1");
+        }
+
+        if (goal2) {
+            const goal2Element = gridContainer.children[goal2[0] * 19 + goal2[1]];
+            goal2Element.classList.remove("highway", "obstacle");
+            goal2Element.classList.add("goal2");
+        }
+    }
+
+    // Send the selected goals to the backend
+    function sendSelection() {
+        if (selectedGoals.length === 2) {
+            const goal1 = selectedGoals[0];
+            const goal2 = selectedGoals[1];
+
+            // Make a POST request to the backend
+            fetch("/upload_goals", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ goal1, goal2 })
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateTaskList(data.tasks1, data.tasks2, data.tasks3);
+                startLogPolling();  // Start log updates
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        } else {
+            alert("Please select two goals!");
+        }
+    }
+
+    function updateTaskList(tasks1, tasks2, tasks3) {
+        const taskList = document.getElementById("task-list-content");
+        taskList.innerHTML = `
+            <h4>From Home to Goal 1:</h4>
+            <ul>${tasks1.map(task => `<li>${task}</li>`).join('')}</ul>
+            <h4>From Goal 1 to Goal 2:</h4>
+            <ul>${tasks2.map(task => `<li>${task}</li>`).join('')}</ul>
+            <h4>From Goal 2 to Home:</h4>
+            <ul>${tasks3.map(task => `<li>${task}</li>`).join('')}</ul>
+        `;
+    }
+
+    // Poll the server for log updates every 3 seconds
+    function startLogPolling() {
+        setInterval(() => {
+            fetch('/get_logs')
+                .then(response => response.json())
+                .then(data => {
+                    updateLogs(data.logs);
+                });
+        }, 3000);
+    }
+
+    function updateLogs(logs) {
+        const logList = document.getElementById("log-list");
+        logList.innerHTML = logs.map(log => `<li>${log}</li>`).join('');
+    }
+
+    // Initial rendering of the grid
+    renderGrid();
+</script>
+
+</body>
+</html>
