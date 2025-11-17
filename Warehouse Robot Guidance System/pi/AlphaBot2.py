@@ -209,14 +209,3 @@ def _clamp_pwm(x):
     return x
 
 
-# -------------------- quick test --------------------
-if __name__ == '__main__':
-    Ab = AlphaBot2()
-    try:
-        Ab.forward()
-        time.sleep(2)
-        Ab.stop()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        GPIO.cleanup()
