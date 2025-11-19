@@ -157,7 +157,23 @@ class AlphaBot2(object):
     def _left_voltage(p):
         # V_L(p) = 0.078*p + 0.665
         return 0.078 * p + 0.665
+    """
+    Left voltage (linear fit)
 
+    ASCII visual (separate):
+    9 |                              *
+    8 |                           *
+    7 |                        *
+    6 |                     *
+    5 |                  *
+    4 |               *
+    3 |            *
+    2 |         *
+    1 |      *
+    0 |__*_________________________________________ PWM
+        0     20     40     60     80     100
+    """
+    
     @staticmethod
     def _right_voltage(p):
         # V_R(p) = -2.57e-7*p^4 + 7.23e-5*p^3 - 7.58e-3*p^2 + 0.37*p - 0.049
@@ -168,7 +184,24 @@ class AlphaBot2(object):
             + 0.37 * p
             - 0.049
         )
+    """
+    Right voltage (nonlinear, saturating)
 
+    ASCII visual (PWM 0→100; stars at ~10-PWM steps):
+    Voltage (V)
+    9 |                                  *
+    8 |                           * * * * *
+    7 |                    * * *
+    6 |               * *
+    5 |          * *
+    4 |       *
+    3 |     *
+    2 |   *
+    1 | *
+    0 |*________________________________________________ PWM
+       0   10   20   30   40   50   60   70   80   90  100
+       """"
+    
     @classmethod
     def _solve_right_pwm_for_voltage(cls, v_star):
         """
@@ -207,5 +240,6 @@ def _clamp_pwm(x):
     if x > 100:
         return 100
     return x
+
 
 
