@@ -1,11 +1,3 @@
-# PV System Efficiency Monitor
-
-This folder contains:
-- **Full report (PDF)** — quick-view or direct download below
-- **Key STM32 source code** — see the `code/` folder
-
----
-
 ## 📄 Report (PDF)
 
 - **View in GitHub:**  
@@ -16,13 +8,18 @@ This folder contains:
 
 > If the GitHub preview ever fails, use the **Direct download** link.
 
-
 ---
 
 ## 💾 Code (STM32 key files)
 
-Browse the code here → [`code/`](code/)
+- **Code folder:** [`code/`](code/)
+- Key sources (quick links):
+  - [`code/main.c`](code/main.c)
+  - [`code/lcd16x2.c`](code/lcd16x2.c) · [`code/lcd16x2.h`](code/lcd16x2.h)
+  - [`code/stm32f4xx_it.c`](code/stm32f4xx_it.c)
+  - [`code/stm32f4xx_hal_msp.c`](code/stm32f4xx_hal_msp.c)
+  - [`code/system_stm32f4xx.c`](code/system_stm32f4xx.c)
+  - [`code/syscalls.c`](code/syscalls.c)
+  - [`code/sysmem.c`](code/sysmem.c)
 
-> Note: This repository includes the **most important** firmware files (e.g., `main.c`, `lcd16x2.c/.h`, HAL MSP/IT/system stubs) for review and traceability.  
-> It is **not** a full STM32CubeIDE project; standard HAL startup/linker scaffolding is intentionally omitted to keep the portfolio compact.
-
+> Note: This folder includes the most relevant source files, not a full CubeIDE project.
