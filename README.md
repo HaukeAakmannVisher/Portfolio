@@ -48,19 +48,6 @@ Short selection of engineering projects with software + hardware.
 
 > **Note:** this isn’t a full CubeIDE project; only the **most relevant** source files are included to keep the repo compact.
 
----
-.
-├── Hauke Aakmann-Visher Portfolio.pdf
-├── Warehouse Robot Guidance System/
-│   ├── warehouse-robot-guidance-system-full-report.pdf
-│   ├── laptop/
-│   └── pi/
-└── PV Efficiency Monitor/
-    ├── pv-efficiency-monitor-full-report.pdf
-    ├── code/
-    └── <second-folder>/
-
-
 
 ---
 
