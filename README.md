@@ -48,7 +48,6 @@ Short selection of engineering projects with software + hardware.
 
 > **Note:** this isn’t a full CubeIDE project; only the **most relevant** source files are included to keep the repo compact.
 
-
 ---
 
 ## ✍️ Author
